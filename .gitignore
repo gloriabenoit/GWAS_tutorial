@@ -1,6 +1,8 @@
 # Main files to keep
-!1_QC_GWAS/1_Main_script_QC_GWAS.txt
-!1_QC_GWAS/inversion.txt
+!1_Main_script_QC_GWAS.txt
+!2_Main_script_MDS.txt
+!3_Main_script_association_GWAS.txt
+!inversion.txt
 
 # Output files
 *.pdf
