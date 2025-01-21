@@ -1,0 +1,23 @@
+# Main files to keep
+!1_Main_script_QC_GWAS.txt
+!inversion.txt
+
+# Output files
+*.pdf
+*.log
+*.in
+*.out
+*.id
+*.txt
+*.sexcheck
+*.afreq
+*.hardy
+*.smiss
+*.vmiss
+*.het
+
+# Steps file (bed, fam, bim)
+!HapMap_3_r3_1.*
+*.bed
+*.fam
+*.bim
