@@ -1,6 +1,7 @@
-GWA tutorial
+GWAS tutorial (updated for PLINK 2.0)
 -------------------------------------------------------------------------------------------------------------
 
+This GitHub repository is forked from the original one created by Andries Marees in order to update PLINK commands from 1.9 to 2.0. The following introduction is the original one.
 
 This GitHub repository provides several tutorials about techniques used to analyze genetic data. 
 Underneath this README we have provided a step-by-step guide to help researchers without experience in Unix to complete these tutorials succesfully. For reseachers familiar with Unix this README will probably be sufficient.
