@@ -55,7 +55,8 @@ plink2 --bfile HapMap_3_r3_4 --mind 0.02 --make-bed --out HapMap_3_r3_5
 # Subjects who were a priori determined as females must have a F value of <0.2, and subjects who were a priori determined as males must have a F value >0.8. This F value is based on the X chromosome inbreeding (homozygosity) estimate.
 # Subjects who do not fulfil these requirements are flagged "PROBLEM" by PLINK.
 
-plink2 --bfile HapMap_3_r3_5 --check-sex
+plink2 --bfile HapMap_3_r3_5 --check-sex 'max-female-xf=0.2' 'min-male-xf=0.8'
+$ By default, females must be under 0 and males above 1 which just does not work. Therefore we need to specify our thresholds.
 $ output: plink2.sexcheck, which shows mainly F the inbreeding coefficient estimated off the X chromosome per individuals.
 
 # Generate plots to visualize the sex-check results.
@@ -93,7 +94,7 @@ $ output: MAF_check.pdf, which shows MAF distribution.
 # Remove SNPs with a low MAF frequency.
 plink2 --bfile HapMap_3_r3_7 --maf 0.05 --make-bed --out HapMap_3_r3_8
 $ output: plink2.afreq, which shows the minor allele frequency and counts.
-$ 1078727 SNPs are left
+# 1073226 SNPs are left
 # A conventional MAF threshold for a regular GWAS is between 0.01 or 0.05, depending on sample size.
 
 
