@@ -8,9 +8,12 @@
 # Furthermore, this tutorial will generate a covariate file which helps to adust for remaining population stratification within the European subjects.
 # In order to complete this tutorial it is necessary to have generated the bfile 'HapMap_3_r3_12' and the file 'indepSNP.prune.in' from the previous tutorial.
 
+$ My comments are signaled by the use of the dollar sign instead of hash mark.
+$ All commands were updated to work for PLINK2, using multiple ressources such as file format references (https://www.cog-genomics.org/plink/1.9/formats vs https://www.cog-genomics.org/plink/2.0/formats) and PLINK official doc (https://plink.readthedocs.io/en/latest/GWAS/)
+$ R scripts were also updated to fit all new file format.
 
 ##############################################################
-############### START ANALISIS ###############################
+############### START ANALYSIS ###############################
 ##############################################################
 
 # Copy the (b)files from the previous tutorial to the current directory (see explanation of the main script).
@@ -24,42 +27,49 @@ cp HOME/{user}/{path/1_QC_GWAS}/indepSNP.prune.in HOME/{user}/{path/2_Population
 wget ftp://ftp-trace.ncbi.nih.gov/1000genomes/ftp/release/20100804/ALL.2of4intersection.20100804.genotypes.vcf.gz
 
 # Convert vcf to Plink format.
-plink --vcf ALL.2of4intersection.20100804.genotypes.vcf.gz --make-bed --out ALL.2of4intersection.20100804.genotypes
+$ The file contains multiallelic variants, which cannot be stored in a .bim.
+$ We need to add --max-alleles 2 in order to avoid an error.
+plink2 --vcf ALL.2of4intersection.20100804.genotypes.vcf.gz --real-ref-alleles --max-alleles 2 --make-bed --out ALL.2of4intersection.20100804.genotypes
 # Noteworthy, the file 'ALL.2of4intersection.20100804.genotypes.bim' contains SNPs without an rs-identifier, these SNPs are indicated with ".". This can also be observed in the file 'ALL.2of4intersection.20100804.genotypes.vcf.gz'. To check this file use this command: zmore ALL.2of4intersection.20100804.genotypes.vcf.gz .
 # The missing rs-identifiers in the 1000 Genomes data are not a problem for this tutorial.
 # However, for good practice, we will assign unique indentifiers to the SNPs with a missing rs-identifier (i.e., the SNPs with ".").
-plink --bfile ALL.2of4intersection.20100804.genotypes --set-missing-var-ids @:#[b37]\$1,\$2 --make-bed --out ALL.2of4intersection.20100804.genotypes_no_missing_IDs
+plink2 --bfile ALL.2of4intersection.20100804.genotypes --set-missing-var-ids @:#[b37]\$r,\$a --make-bed --out ALL.2of4intersection.20100804.genotypes_no_missing_IDs
+plink2 --bfile ALL.2of4intersection.20100804.genotypes --real-ref-alleles --set-missing-var-ids @:#[b37]\$r,\$a --make-bed --out ALL.2of4intersection.20100804.genotypes_no_missing_IDs
 
 ## QC on 1000 Genomes data.
 # Remove variants based on missing genotype data.
-plink --bfile ALL.2of4intersection.20100804.genotypes_no_missing_IDs --geno 0.2 --allow-no-sex --make-bed --out 1kG_MDS
+plink2 --bfile ALL.2of4intersection.20100804.genotypes_no_missing_IDs --geno 0.2 --allow-no-sex --make-bed --out 1kG_MDS
+
+$ For some reason, alleles have swapped orders, this need to be taken into consideration for the rest of the analysis.
 
 # Remove individuals based on missing genotype data.
-plink --bfile 1kG_MDS --mind 0.2 --allow-no-sex --make-bed --out 1kG_MDS2
+plink2 --bfile 1kG_MDS --mind 0.2 --allow-no-sex --make-bed --out 1kG_MDS2
 
 # Remove variants based on missing genotype data.
-plink --bfile 1kG_MDS2 --geno 0.02 --allow-no-sex --make-bed --out 1kG_MDS3
+plink2 --bfile 1kG_MDS2 --geno 0.02 --allow-no-sex --make-bed --out 1kG_MDS3
 
 # Remove individuals based on missing genotype data.
-plink --bfile 1kG_MDS3 --mind 0.02 --allow-no-sex --make-bed --out 1kG_MDS4
+plink2 --bfile 1kG_MDS3 --mind 0.02 --allow-no-sex --make-bed --out 1kG_MDS4
 
 # Remove variants based on MAF.
-plink --bfile 1kG_MDS4 --maf 0.05 --allow-no-sex --make-bed --out 1kG_MDS5
+plink2 --bfile 1kG_MDS4 --maf 0.05 --allow-no-sex --make-bed --out 1kG_MDS5
 
 # Extract the variants present in HapMap dataset from the 1000 genomes dataset.
 awk '{print$2}' HapMap_3_r3_12.bim > HapMap_SNPs.txt
-plink --bfile 1kG_MDS5 --extract HapMap_SNPs.txt --make-bed --out 1kG_MDS6
+plink2 --bfile 1kG_MDS5 --extract HapMap_SNPs.txt --make-bed --out 1kG_MDS6
 
 # Extract the variants present in 1000 Genomes dataset from the HapMap dataset.
 awk '{print$2}' 1kG_MDS6.bim > 1kG_MDS6_SNPs.txt
-plink --bfile HapMap_3_r3_12 --extract 1kG_MDS6_SNPs.txt --recode --make-bed --out HapMap_MDS
+plink2 --bfile HapMap_3_r3_12 --extract 1kG_MDS6_SNPs.txt --recode vcf --make-bed --out HapMap_MDS
+$ --recode used to create a .map file, which is now deprecated. We choose to build a .vcf file.
 # The datasets now contain the exact same variants.
 
 ## The datasets must have the same build. Change the build 1000 Genomes data build.
-awk '{print$2,$4}' HapMap_MDS.map > buildhapmap.txt
+awk '!/#/ {print$3,$2}' HapMap_MDS.vcf > buildhapmap.txt
 # buildhapmap.txt contains one SNP-id and physical position per line.
+$ We used to keep variant identifier and base-pair coordinate ($2 and $4 in the .map file), in order to save the same values in our .vcf file, we need to keep $3 and $2 in this order.
 
-plink --bfile 1kG_MDS6 --update-map buildhapmap.txt --make-bed --out 1kG_MDS7
+plink2 --bfile 1kG_MDS6 --update-map buildhapmap.txt --make-bed --out 1kG_MDS7
 # 1kG_MDS7 and HapMap_MDS now have the same build.
 
 ## Merge the HapMap and 1000 Genomes data sets
@@ -72,8 +82,9 @@ plink --bfile 1kG_MDS6 --update-map buildhapmap.txt --make-bed --out 1kG_MDS7
 # The following steps are maybe quite technical in terms of commands, but we just compare the two data sets and make sure they correspond.
 
 # 1) set reference genome 
-awk '{print$2,$5}' 1kG_MDS7.bim > 1kg_ref-list.txt
-plink --bfile HapMap_MDS --reference-allele 1kg_ref-list.txt --make-bed --out HapMap-adj
+awk '{print$2,$6}' 1kG_MDS7.bim > 1kg_ref-list.txt
+$ We're using $6 instead of $5 since it got switched before. This way we can obtain the same results are the original tutorial.
+plink2 --bfile HapMap_MDS --ref-allele 1kg_ref-list.txt --make-bed --out HapMap-adj
 # The 1kG_MDS7 and the HapMap-adj have the same reference genome for all SNPs.
 # This command will generate some warnings for impossible A1 allele assignment.
 
@@ -88,7 +99,8 @@ sort 1kGMDS7_tmp HapMap-adj_tmp |uniq -u > all_differences.txt
 # Print SNP-identifier and remove duplicates.
 awk '{print$1}' all_differences.txt | sort -u > flip_list.txt
 # Generates a file of 812 SNPs. These are the non-corresponding SNPs between the two files. 
-# Flip the 812 non-corresponding SNPs. 
+# Flip the 812 non-corresponding SNPs.
+$ Sadly flip is no longer supported in PLINK 2.0, so in order to do this you need to use PLINK 1.9.
 plink --bfile HapMap-adj --flip flip_list.txt --reference-allele 1kg_ref-list.txt --make-bed --out corrected_hapmap
 
 # Check for SNPs which are still problematic after they have been flipped.
@@ -145,7 +157,7 @@ cat race_1kG14.txt racefile_own.txt | sed -e '1i\FID IID race' > racefile.txt
 
 # Generate population stratification plot.
 Rscript MDS_merged.R 
-# The output file MDS.pdf demonstrates that our ‘own’ data falls within the European group of the 1000 genomes data. Therefore, we do not have to remove subjects.
+# The output file MDS.pdf demonstrates that our ï¿½ownï¿½ data falls within the European group of the 1000 genomes data. Therefore, we do not have to remove subjects.
 # For educational purposes however, we give scripts below to filter out population stratification outliers. Please execute the script below in order to generate the appropriate files for the next tutorial.
 
 ## Exclude ethnic outliers.

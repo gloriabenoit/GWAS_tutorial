@@ -130,7 +130,7 @@ plink2 --bfile HapMap_3_r3_8 --hwe 1e-5 --make-bed --out HapMap_3_r3_9
 # Therefore, to generate a list of non-(highly)correlated SNPs, we exclude high inversion regions (inversion.txt [High LD regions]) and prune the SNPs using the command --indep-pairwise�.
 # The parameters �50 5 0.2� stand respectively for: the window size, the number of SNPs to shift the window at each step, and the multiple correlation coefficient for a SNP being regressed on all other SNPs simultaneously.
 
-plink2 --bfile HapMap_3_r3_9 --exclude inversion.txt --indep-pairwise 50 5 0.2 --out indepSNP
+plink2 --bfile HapMap_3_r3_9 --exclude bed1 inversion.txt --indep-pairwise 50 5 0.2 --out indepSNP
 $ output: indepSNP.prune.in and indepSNP.prune.out, these files show respectively the IDs of all conserved and excluded variants.
 # Note, don't delete the file indepSNP.prune.in, we will use this file in later steps of the tutorial.
 

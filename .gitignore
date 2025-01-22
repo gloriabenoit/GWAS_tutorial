@@ -4,6 +4,14 @@
 !3_Main_script_association_GWAS.txt
 !inversion.txt
 
+# Data file
+!HapMap_3_r3_1.*
+*.bed
+*.fam
+*.bim
+*.vcf
+*.gz
+
 # Output files
 *.pdf
 *.log
@@ -17,9 +25,7 @@
 *.smiss
 *.vmiss
 *.het
+*.nosex
 
-# Steps file (bed, fam, bim)
-!HapMap_3_r3_1.*
-*.bed
-*.fam
-*.bim
+# Temporary files
+*_tmp
