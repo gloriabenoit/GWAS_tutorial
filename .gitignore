@@ -1,7 +1,4 @@
-# Main files to keep
-!1_Main_script_QC_GWAS.txt
-!2_Main_script_PCA.txt
-!3_Main_script_association_GWAS.txt
+# Files to keep
 !inversion.txt
 
 # Data file
