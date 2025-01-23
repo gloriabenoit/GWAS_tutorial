@@ -11,6 +11,12 @@
 *.bim
 *.vcf
 *.gz
+*.pgen
+*.psam
+*.pvar
+*.panel
+*.eigenval
+*.eigenvec
 
 # Output files
 *.pdf

@@ -14,8 +14,10 @@
 # For a thorough theoretical explanation of all QC steps we refer to the article accompanying this tutorial entitled �A tutorial on conducting Genome-Wide-Association Studies: Quality control and statistical analysis� (https://www.ncbi.nlm.nih.gov/pubmed/29484742).
 
 $ My comments are signaled by the use of the dollar sign instead of hash mark.
-$ All commands were updated to work for PLINK2, using multiple ressources such as file format references (https://www.cog-genomics.org/plink/1.9/formats vs https://www.cog-genomics.org/plink/2.0/formats) and PLINK official doc (https://plink.readthedocs.io/en/latest/GWAS/)
+$ All commands were updated to work for PLINK 2.0, using multiple ressources such as file format references (https://www.cog-genomics.org/plink/1.9/formats vs https://www.cog-genomics.org/plink/2.0/formats) and PLINK official doc (https://plink.readthedocs.io/en/latest/GWAS/)
 $ R scripts were also updated to fit all new file format.
+
+$ "plink2" references PLINK 2.0, while "plink" references PLINK 1.9
 
 ##############################################################
 ############### START ANALYSIS ###############################
@@ -185,4 +187,3 @@ plink2 --bfile HapMap_3_r3_11 --king-cutoff 0.2 --make-bed --out HapMap_3_r3_12
 # For the next tutorial, using the script: 2_Main_script_MDS.txt, you need the following files:
 # - The bfile HapMap_3_r3_12 (i.e., HapMap_3_r3_12.fam,HapMap_3_r3_12.bed, and HapMap_3_r3_12.bim
 # - indepSNP.prune.in
-
