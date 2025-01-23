@@ -14,12 +14,10 @@
 *.pgen
 *.psam
 *.pvar
-*.panel
-*.eigenval
-*.eigenvec
 
 # Output files
 *.pdf
+*.jpeg
 *.log
 *.in
 *.out
@@ -32,6 +30,10 @@
 *.vmiss
 *.het
 *.nosex
+*.panel
+*.eigenval
+*.eigenvec
+*.hybrid
 
 # Temporary files
 *_tmp
