@@ -122,10 +122,7 @@ For more information of using R and PLINK in a Unix/Linux environment, click [he
 
 ## Execution of tutorials 2 and 3
 
-Tutorials 2 and 3 need to be completed in order, and both use file created in the previous tutorial. You need to use the output file from the last tutorial as input for the tutorial you want to start. The command below can be used to copy the file to another directory.
-```bash
-cp {path/directory/file} {path/directory}
-```
+Tutorials 2 and 3 need to be completed in order, and both use file created in the previous tutorial. You need to use the output file from the last tutorial as input for the tutorial you want to start.
 
 ## Execution of tutorial 4
 

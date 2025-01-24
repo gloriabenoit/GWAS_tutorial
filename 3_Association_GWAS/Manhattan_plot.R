@@ -10,4 +10,3 @@ dev.off()
 # jpeg("assoc_manhattan.jpeg")
 # manhattan(results_as,chr="CHR",bp="BP",p="P",snp="SNP", main = "Manhattan plot: assoc")
 # dev.off()  
-

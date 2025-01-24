@@ -1,11 +1,10 @@
-
 # Explanation of the main script
 
 This tutorial uses freely available HapMap data *hapmap3_r3_b36_fwd.consensus.qc*. We simulated a binary outcome measure (i.e., a binary phenotypic trait) and added this to the dataset. The outcome measure was only simulated for the founders in the HapMap data. This data set will be referred to as *HapMap_3_r3_1*. The HapMap data, without our simulated outcome measure, can also be obtained [here](http://hapmap.ncbi.nlm.nih.gov/downloads/genotypes/2010-05_phaseIII/plink_format/).
 
 It is essential for the execution of the tutorial that that all scripts belonging to this tutorial are in the same directory on your UNIX workstation.
 Many scripts include comments which explain how these scripts work. Note, in order to complete the tutorial it is essential to execute all commands in this tutorial.
-This script can also be used for your own data analysis, to use it as such, replace the name of the HapMap file with the name of your own data file. 
+This script can also be used for your own data analysis, to use it as such, replace the name of the HapMap file with the name of your own data file.
 Furthermore, this script is based on a binary outcome measure, and is therefore not applicable for quantitative outcome measures (this would require some adaptations).
 
 Note, most GWAS studies are performed on an ethnic homogenous population, in which population outliers are removed. The HapMap data, used for this tutorial, contains multiple distinct ethnic groups, which makes it problematic for analysis.
@@ -21,6 +20,8 @@ For a thorough theoretical explanation of all QC steps we refer to the article a
 >
 > When command architecture varies between PLINK 1.07 and PLINK 2.0, the `plink` command is commented and is before the `plink2` one.
 
+---
+
 # Start of analysis
 
 ## Missingness
@@ -31,13 +32,13 @@ We will investigate missingness per individual and per SNP and make histograms.
 ```bash
 plink2 --bfile HapMap_3_r3_1 --missing 
 ```
-> output: plink2.smiss and plink2.vmiss, these files show respectively the proportion of missing SNPs per individual (sample-based) and the proportion of missing individuals per SNP (variant-based).
+> output: *plink2.smiss* and *plink2.vmiss*, these files show respectively the proportion of missing SNPs per individual (sample-based) and the proportion of missing individuals per SNP (variant-based).
 
 Now, we can generate plots to visualize the missingness results.
 ```bash
 Rscript --no-save hist_miss.R
 ```
-> output: histsmiss.pdf and histvmiss.pdf, these files show respectively individual and SNP missingness.
+> output: *histsmiss.pdf* and *histvmiss.pdf*, these files show respectively individual and SNP missingness.
 
 We need to delete SNPs and individuals with high levels of missingness, explanation of this and all following steps can be found in box 1 and table 1 of the article mentioned in the comments of this script.
 
@@ -73,27 +74,29 @@ Subjects who were *a priori* determined as females must have a F value under 0.2
 # plink --bfile HapMap_3_r3_5 --check-sex 
 plink2 --bfile HapMap_3_r3_5 --check-sex 'max-female-xf=0.2' 'min-male-xf=0.8'
 ```
-> output: plink2.sexcheck, which shows mainly F the inbreeding coefficient estimated off the X chromosome per individuals.
+> output: *plink2.sexcheck*, which shows mainly F the inbreeding coefficient estimated off the X chromosome per individuals.
 
 Generate plots to visualize the sex-check results.
 ```bash
 Rscript --no-save gender_check.R
 ```
-> ouput: Gender_check.pdf, Men_check.pdf and Woman_check.pdf, these files show the distribution of F values based on gender in data.
+> output: *Gender_check.pdf*, *Men_check.pdf* and *Woman_check.pdf*, these files show the distribution of F values based on gender in data.
 
 These checks indicate that there is one woman with a sex discrepancy, F value of 0.99. (When using other datasets often a few discrepancies will be found).
 
 The following two scripts can be used to deal with individuals with a sex discrepancy.Note, please use **one of the two** options below to generate the bfile *HapMap_3_r3_6*, which we will use in the next step of this tutorial.
 
 1. Delete individuals with sex discrepancy.
+We start by generating a list of individuals with the status "PROBLEM".
 ```bash
-grep "PROBLEM" plink2.sexcheck| awk '{print$1,$2}'> sex_discrepancy.txt
+grep "PROBLEM" plink2.sexcheck| awk '{print$1,$2}' > sex_discrepancy.txt
 ```
-This command generates a list of individuals with the status "PROBLEM".
+> output: *sex_discrepancy.txt*, which shows IDs for each problematic individual.
+
+We can then remove said individuals.
 ```bash
 plink2 --bfile HapMap_3_r3_5 --remove sex_discrepancy.txt --make-bed --out HapMap_3_r3_6
 ```
-This command removes the list of individuals with the status "PROBLEM".
 
 2. impute-sex.
 ```bash
@@ -110,22 +113,26 @@ We want to generate a bfile with autosomal SNPs only and delete SNPs with a low 
 We first want to select autosomal SNPs only (i.e., from chromosomes 1 to 22).
 ```bash
 awk '{ if ($1 >= 1 && $1 <= 22) print $2 }' HapMap_3_r3_6.bim > snp_1_22.txt
+```
+> output: *snp_1_22.txt*, which corresponds to all autosomal SNPs.
+```bash
 plink2 --bfile HapMap_3_r3_6 --extract snp_1_22.txt --make-bed --out HapMap_3_r3_7
 ```
 
 Now, we can generate the MAF distribution.
 ```bash
 plink2 --bfile HapMap_3_r3_7 --freq --out MAF_check
+```
+> ouput: *MAF_check.afreq*, which shows the minor allele frequency and counts.
+```bash
 Rscript --no-save MAF_check.R
 ```
-> output: MAF_check.pdf, which shows MAF distribution.
+> output: *MAF_check.pdf*, which shows MAF distribution.
 
 Finally, we can remove SNPs with a low MAF frequency.
 ```bash
 plink2 --bfile HapMap_3_r3_7 --maf 0.05 --make-bed --out HapMap_3_r3_8
 ```
-> output: plink2.afreq, which shows the minor allele frequency and counts.
-
 After this step, 1073226 SNPs are left.
 
  A conventional MAF threshold for a regular GWAS is between 0.01 or 0.05, depending on sample size.
@@ -139,19 +146,23 @@ We first need to check the distribution of HWE p-values of all SNPs.
 ```bash
 plink2 --bfile HapMap_3_r3_8 --hardy
 ```
-> output: plink2.hardy, which shows Hardy-Weinberg equilibrium exact test report for each autosomal diploid variant.
+> output: *plink2.hardy*, which shows Hardy-Weinberg equilibrium exact test report for each autosomal diploid variant.
 
 In order to zoom in on strongly deviating SNPs, we need to select SNPs with HWE p-value below 0.00001.
 > LC_NUMERIC="C" is to avoid not reading floats as such become of a different decimal separator (this assures '.' is used).
 ```bash
 # awk '{ if ($9 <0.00001) print $0 }' plink.hwe>plinkzoomhwe.hwe
-LC_NUMERIC="C" awk '{ if ($10 <0.00001) print $0 }' plink2.hardy>plink2zoomhwe.hardy
+LC_NUMERIC="C" awk '{ if ($10 <0.00001) print $0 }' plink2.hardy > plink2zoomhwe.hardy
+```
+> output: *plink2zoomhwe.hardy*, which shows Hardy-Weinberg equilibrium exact test report for strongly deviating SNPs.
+
+```bash
 Rscript --no-save hwe.R
 ```
-> ouput: histhwe.pdf and histhwe_below_threshold.pdf, these files show respectively HWE for all SNPs and only strongly deviating ones.
+> ouput: *histhwe.pdf* and *histhwe_below_threshold.pdf*, these files show respectively HWE for all SNPs and only strongly deviating ones.
 
 > By default the `--hwe` option in plink used to only filter for controls. However for PLINK 2.0, this is no longer the case. There is currently no special handling of case/control phenotypes. If needed, we can use `--keep-if "PHENO1==control"` or `--keep-if "PHENO1==case"`.
-
+>
 > The original tutorial had different threshold values for case and control, which we will not do here.
 ```bash
 # plink --bfile HapMap_3_r3_8 --hwe 1e-6 --make-bed --out HapMap_hwe_filter_step1
@@ -169,16 +180,16 @@ Checks for heterozygosity are performed on a set of SNPs which are not highly co
 
 The parameters "50 5 0.2" stand respectively for the window size, the number of SNPs to shift the window at each step, and the multiple correlation coefficient for a SNP being regressed on all other SNPs simultaneously.
 ```bash
-# plink --bfile HapMap_3_r3_9 --exclude range inversion.txt --indep-pairwise 50 5 0.2 --out indepSNP
+# plink --bfile HapMap_3_r3_9 --exclude inversion.txt --range --indep-pairwise 50 5 0.2 --out indepSNP
 plink2 --bfile HapMap_3_r3_9 --exclude bed1 inversion.txt --indep-pairwise 50 5 0.2 --out indepSNP
 ```
-> output: indepSNP.prune.in and indepSNP.prune.out, these files show respectively the IDs of all conserved and excluded variants.
+> output: *indepSNP.prune.in* and *indepSNP.prune.out*, these files show respectively the IDs of all conserved and excluded variants.
 
 Note, don't delete the file indepSNP.prune.in, we will use this file in later steps of the tutorial.
 ```bash
 plink2 --bfile HapMap_3_r3_9 --extract indepSNP.prune.in --het --out R_check
 ```
-> output: R_check.het, which shows information about homozygous and heterozygous genotypes counts.
+> output: *R_check.het*, which shows information about homozygous and heterozygous genotypes counts.
 
 This file contains your pruned data set.
 
@@ -186,15 +197,16 @@ We can now plot the heterozygosity rate distribution
 ```bash
 Rscript --no-save check_heterozygosity_rate.R
 ```
-The following code generates a list of individuals who deviate more than 3 standard deviations from the heterozygosity rate mean.
+> output *heterozygosity.pdf*, which shows heterozygosity rate distribution.
+
+For data manipulation we recommend using UNIX. However, when performing statistical calculations R might be more convenient, hence the use of the Rscript for this step. The following code generates a list of individuals who deviate more than 3 standard deviations from the heterozygosity rate mean.
 
 > This value of 3 is arbitrary, and is the recommended number from the original article.
-
-For data manipulation we recommend using UNIX. However, when performing statistical calculations R might be more convenient, hence the use of the Rscript for this step:
 ```bash
 Rscript --no-save heterozygosity_outliers_list.R
 ```
-> output: fail-het-qc.txt
+> output: *fail-het-qc.txt*, which shows all heterozygosity outliers found.
+
 When using our example data/the HapMap data this list contains 2 individuals (i.e., two individuals have a heterozygosity rate deviating more than 3 SD's from the mean).
 
 Using this list, we remove heterozygosity rate outliers.
@@ -212,10 +224,10 @@ We can check for relationships between individuals with a pihat over 0.2.
 ```bash
 plink2 --bfile HapMap_3_r3_10 --king-cutoff 0.2 --out pihat_min0.2
 ```
-> ouput: pihat_min0.2.king.cutoff.in.id and pihat_min0.2.cutoff.out.id, these files show respectively the IDs of all conserved and excluded variants.
+> ouput: *pihat_min0.2.king.cutoff.in.id* and *pihat_min0.2.cutoff.out.id*, these files show respectively the IDs of all conserved and excluded variants.
 
 The HapMap dataset is known to contain parent-offspring relations.
-> Therefore, we found that a lot of individuals are filtered out (46 here).
+> Therefore, we found that a lot of individuals are filtered out (53 here).
 
 Normally, family based data should be analyzed using specific family based methods. In this tutorial, for demonstrative purposes, we treat the relatedness as cryptic relatedness in a random population sample.
 In this tutorial, we aim to remove all 'relatedness' from our dataset.
@@ -228,7 +240,7 @@ Now we will look again for individuals with a pihat over 0.2.
 ```bash
 plink2 --bfile HapMap_3_r3_11 --king-cutoff 0.2 --out pihat_min0.2_in_founders
 ```
-> output: pihat_min0.2_in_founders.king.cutoff.in.id and pihat_min0.2_in_founders.king.cutoff.out.id, these files show respectively the IDs of all conserved and excluded variants.
+> output: *pihat_min0.2_in_founders.king.cutoff.in.id* and *pihat_min0.2_in_founders.king.cutoff.out.id*, these files show respectively the IDs of all conserved and excluded variants in only founders.
 
 > Only one individual now remains. How he was chosen by the algorithm is unclear. We can filter him out.
 ```bash

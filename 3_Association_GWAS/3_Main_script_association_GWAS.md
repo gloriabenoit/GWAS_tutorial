@@ -10,6 +10,8 @@ In order to run this script you need the following files from the previous tutor
 >
 > When command architecture varies between PLINK 1.07 and PLINK 2.0, the `plink` command is commented and is before the `plink2` one.
 
+---
+
 # Association analyses
 
 For the association analyses we use the files generated in the previous tutorial (population stratification), named *HapMap_3_r3_13* (with .bed, .bim, and .fam. extensions) and *covar_pca.txt*.
@@ -29,6 +31,8 @@ We will be using 10 principal components as covariates in this logistic analysis
 # plink --bfile HapMap_3_r3_13 --covar covar_mds.txt --logistic --hide-covar --out logistic_results
 plink2 --bfile HapMap_3_r3_13 --glm hide-covar --covar covar_pca.txt --out logistic_results
 ```
+> output: *logistic_results_2.PHENO1.glm.logistic.hybrid*, which shows computed regression association statistics.
+
 Note, we use the option `-hide-covar` to only show the additive results of the SNPs in the output file.
 
 We remove NA values, since those might give problems when generating plots in later steps.
