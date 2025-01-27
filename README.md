@@ -25,7 +25,7 @@ The tutorials are designed to run on an UNIX/Linux computer/server. The first 3 
 Note, without placing all files belonging to a specific tutorial in the same directory, the tutorials cannot be completed. 
 
 Furthermore, the first 3 tutorials are not independent; they should be followed in the order given above, according to their number. For example, the files generated at the end of tutorial 1 are essential in performing tutorial 2. Therefore, those files should be moved/copied to the directory in which tutorial 2 is executed. In addition, the files from tutorial 2 are essential for tutorial 3.
-The fourth tutorial (*4_ PRS.doc*) is a MS Word document, and runs independently of the previous 3 tutorials.
+The fourth tutorial (*4_ PRS.md*) can run independently, but can also use data from the previous 3 tutorials. 
 
 All scripts are developed for UNIX/Linux computer resources, and all commands should be typed/pasted at the shell prompt.
 
@@ -61,7 +61,7 @@ Step-by-step-guide for researches new to Unix and/or genetic analyses.
 
 ## Introduction
 
-The tutorial consist of four separate parts. The first three are dependent of each other and can only be performed in consecutive order, starting from the first (*1_QC_GWAS*), then the second (*2_Population_stratification*, followed by the third (*3_Association_GWAS*). The fourth part (*4_ PRS.doc*) can be performed independently. 
+The tutorial consist of four separate parts. The first three are dependent of each other and can only be performed in consecutive order, starting from the first (*1_QC_GWAS*), then the second (*2_Population_stratification*, followed by the third (*3_Association_GWAS*). The fourth part (*4_ PRS*) can be performed independently. 
 
 The Unix commands provided in this guide should be typed/copy-and-pasted after the prompt ($ or >) on your Unix machine.
 
@@ -126,5 +126,5 @@ Tutorials 2 and 3 need to be completed in order, and both use file created in th
 
 ## Execution of tutorial 4
 
-*4_PRS.doc* works independently from the other tutorials. After downloading *4_PRS.doc*, you can run the script, without the need for unzipping, in a directory of choice.
+*4_PRS* can work independently from the other tutorials, as it uses toy data provided with the software. After downloading *4_PRS.md*, you can run the script in a directory of choice. Commands to use data computed in previous tutorial is provided, but the results are not correct. We think this is because of use of the simulated data rather than real data, but this has yet to be proven.
 
