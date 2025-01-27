@@ -34,3 +34,8 @@
 
 # Temporary files
 *_tmp
+
+# PRSice files
+4_PRS/*
+!4_Main_script_PRS.md
+!4_PRS/*.png
