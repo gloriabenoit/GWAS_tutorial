@@ -243,9 +243,9 @@ With this information, we can generate population stratification plot.
 ```bash
 Rscript PCA_merged.R 
 ```
-> output: *PCA.pdf*, which shows population repartition in both components.
+> output: *PCA.jpeg*, which shows population repartition in both components.
 
-The output file PCA.pdf demonstrates that our "own" data falls within the European group of the 1000 genomes data. Therefore, we do not have to remove subjects.
+The output file PCA.jpeg demonstrates that our "own" data falls within the European group of the 1000 genomes data. Therefore, we do not have to remove subjects.
 
 For educational purposes however, we give scripts below to filter out population stratification outliers. Please execute the script below in order to generate the appropriate files for the next tutorial.
 

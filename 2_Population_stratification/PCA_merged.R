@@ -2,7 +2,7 @@ data<- read.table(text = sub("#", "", readLines("PCA_merge2.eigenvec")), header 
 race<- read.table(file="racefile.txt", header = TRUE)
 datafile<- merge(data,race,by=c("IID"))
 
-pdf("PCA.pdf",width=500,height=500)
+jpeg("PCA.jpeg", quality=100, height=800, width=800, res=150)
 for (i in 1:nrow(datafile))
 {
 if (datafile[i,"race"]=="EUR") {plot(datafile[i,"PC1"],datafile[i,"PC2"],type="p",xlim=c(-0.1,0.2),ylim=c(-0.15,0.1),xlab="MDS Component 1",ylab="MDS Component 2",pch=1,cex=0.5,col="green")}

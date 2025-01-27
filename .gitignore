@@ -1,5 +1,7 @@
 # Files to keep
 !inversion.txt
+!4_Main_script_PRS.md
+!4_PRS/PRSice.*.png
 
 # Data file
 !HapMap_3_r3_1.*
@@ -13,7 +15,6 @@
 *.pvar
 
 # Output files
-*.pdf
 *.jpeg
 *.log
 *.in
@@ -37,5 +38,3 @@
 
 # PRSice files
 4_PRS/*
-!4_Main_script_PRS.md
-!4_PRS/*.png

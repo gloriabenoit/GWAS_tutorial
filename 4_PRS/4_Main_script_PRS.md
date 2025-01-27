@@ -83,6 +83,43 @@ The second plot is PRSice_HIGH-RES_PLOT_{date}.png (Figure S2) shows for many di
 
 Both figures show that many SNPs that affect the trait in the base sample can be used to predict the trait in the target sample. Note that the two traits can be either the same or different. If the same trait is used the predictive value is related to the heritability of the trait (as well as the sample size of the base sample). If different traits are analyzed, the predictive value is also related to the genetic overlap between the two traits. Either way, polygenic risk score analysis typically shows that models with lenient p-value thresholds often predict better than models with more stringent thresholds, suggesting that many statistically insignificant SNPs still have predictive value in polygenic traits.
 
+## Using our data
+
+> The following section was added by me in order to use the data computed in the previous tutorials. To lighten the visualization, we will drop the blockquote even though this is an addition.
+
+We can now use our own data and do a polygenic risk score analysis. We need the results computed in the previous tutorial, that we can copy using the following command:
+```bash
+# Assuming you are in the 4_PRS directory
+cp ../3_Association_GWAS/HapMap_3_r3_13.bim ../3_Association_GWAS/HapMap_3_r3_13.bed ../3_Association_GWAS/HapMap_3_r3_13.fam ../3_Association_GWAS/logistic_results_2.PHENO1.glm.logistic.hybrid ./
+```
+
+Since we are working with a binary trait, we will use the binary trait architecture. They are two options that need our input:
+* `--base` is the GWAS summary results, which the PRS is based on.
+* `--target` is the raw genotype data of target phenotype. It can be in the form of [PLINK binary](https://www.cog-genomics.org/plink2/formats#bed) or [BGEN](http://www.well.ox.ac.uk/~gav/bgen_format/).
+
+The `--base` option will take the result of our GWAS analysis: *logistic_results_2.PHENO1.glm.logistic.hybrid*. However since the format we are using (*.glm.logistic.hybrid*) is different from the default one (*.assoc*), we need to specify which columns to use.
+
+*logistic_results_2.PHENO1.glm.logistic.hybrid* starts with '#' which will be a problem for later. Therefore we need to remove it.
+```bash
+sed '1s/^#//' logistic_results_2.PHENO1.glm.logistic.hybrid > log_results.glm.logistic.hybrid
+```
+
+To differenciate between our results and the toy results, we can specify an exit name with `--out`.
+
+```bash
+Rscript PRSice.R --dir . \
+    --prsice ./PRSice_linux \
+    --base log_results.glm.logistic.hybrid \
+    --snp ID --chr CHROM --bp POS --A1 ALT --A2 REF --stat OR --pvalue P \
+    --target HapMap_3_r3_13 \
+    --thread 1 \
+    --stat OR \
+    --binary-target T \
+    --out log_results
+```
+
+These results are terrible, but I believe this is because of the data we have created. The results might be better using real data, and not a simulated binary outcome.
+
 # Conclusion
 
 In this tutorial we discussed how to perform a simple polygenic risk score analysis using the PRSice script and how to interpret its results. When PLINK genotype target files are available, PRSice provides a relatively easy way of performing polygenic risk score analysis. As mentioned before, PRSice offers many additional options to adjust the risk score analysis, including adding covariates and additional principal components and adjusting clumping parameters. We therefore recommend reading the user manual of PRSice to perform a polygenic risk score analysis optimal to the research question at hand.

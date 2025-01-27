@@ -38,7 +38,7 @@ Now, we can generate plots to visualize the missingness results.
 ```bash
 Rscript --no-save hist_miss.R
 ```
-> output: *histsmiss.pdf* and *histvmiss.pdf*, these files show respectively individual and SNP missingness.
+> output: *histsmiss.jpeg* and *histvmiss.jpeg*, these files show respectively individual and SNP missingness.
 
 We need to delete SNPs and individuals with high levels of missingness, explanation of this and all following steps can be found in box 1 and table 1 of the article mentioned in the comments of this script.
 
@@ -80,7 +80,7 @@ Generate plots to visualize the sex-check results.
 ```bash
 Rscript --no-save gender_check.R
 ```
-> output: *Gender_check.pdf*, *Men_check.pdf* and *Woman_check.pdf*, these files show the distribution of F values based on gender in data.
+> output: *Gender_check.jpeg*, *Men_check.jpeg* and *Woman_check.jpeg*, these files show the distribution of F values based on gender in data.
 
 These checks indicate that there is one woman with a sex discrepancy, F value of 0.99. (When using other datasets often a few discrepancies will be found).
 
@@ -127,7 +127,7 @@ plink2 --bfile HapMap_3_r3_7 --freq --out MAF_check
 ```bash
 Rscript --no-save MAF_check.R
 ```
-> output: *MAF_check.pdf*, which shows MAF distribution.
+> output: *MAF_check.jpeg*, which shows MAF distribution.
 
 Finally, we can remove SNPs with a low MAF frequency.
 ```bash
@@ -159,7 +159,7 @@ LC_NUMERIC="C" awk '{ if ($10 <0.00001) print $0 }' plink2.hardy > plink2zoomhwe
 ```bash
 Rscript --no-save hwe.R
 ```
-> ouput: *histhwe.pdf* and *histhwe_below_threshold.pdf*, these files show respectively HWE for all SNPs and only strongly deviating ones.
+> ouput: *histhwe.jpeg* and *histhwe_below_threshold.jpeg*, these files show respectively HWE for all SNPs and only strongly deviating ones.
 
 > By default the `--hwe` option in plink used to only filter for controls. However for PLINK 2.0, this is no longer the case. There is currently no special handling of case/control phenotypes. If needed, we can use `--keep-if "PHENO1==control"` or `--keep-if "PHENO1==case"`.
 >
@@ -197,7 +197,7 @@ We can now plot the heterozygosity rate distribution
 ```bash
 Rscript --no-save check_heterozygosity_rate.R
 ```
-> output *heterozygosity.pdf*, which shows heterozygosity rate distribution.
+> output *heterozygosity.jpeg*, which shows heterozygosity rate distribution.
 
 For data manipulation we recommend using UNIX. However, when performing statistical calculations R might be more convenient, hence the use of the Rscript for this step. The following code generates a list of individuals who deviate more than 3 standard deviations from the heterozygosity rate mean.
 
